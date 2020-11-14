@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+<head>
+<title> Ростелеком </title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+    
+    <body>
+  	<div class="messanger_container">
+    <div class="messenger">
+    <div class="messanger_title">
+    <span class="mt_value"> Чат </span>
+    <span class="material-icons goto_settings"> settings </span>
+    </div>
+    <ul id="messages">
+    	<div class="message_container">
+    		<div class="message">
+    			<div class="message_avatar_block">
+    				<img class="message_avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAA1VBMVEXx9PZ4AP//TxLy9vZtAP/n4vfx+Pv2wbX/QgD0+fb4//VzAP//RgD7TBHy8/a0HQbcNwzyRhDDp/qHNf7oPw7j3PezHADJKwnfOQ3uRA/RMAvl3/ixGwa7IQeHNv6GMP6AB+azCQDBT0O+IwD8cUzJKwDTMgDBpPrazfjg1/jHrfnUxPiMPf3KsvmtgPuUUP3q5/fQVkTLHwDYKQDiXkblMwDybE18B/S7KHWME9mRFNB+CfCpefzYN0GWY/+2AJTMwP++ULbvNBT9Zj3oxtLxurj01s+btbN4AAAD8klEQVR4nO3ci1LaQACFYSBoTVYEKzWAIigVa0tb7c3W2tr7+z9Sc1mQS0Kymzjs2Tn/+AB8c5Jdh3GsVBhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY4yl5jqb/gSPnHfxwt30Z3jUvIu6uLSZ6D2tV6s2EyNgQHxmK1ECA+KRncQZ0NYV54B2rrgAtHHF4JqoLmTbiksL2rdiAtAuYiLQpgc1BWjPiqlAW1ZcA7RjxbVAG1bMAOKvmAlEJ+YAYj+ouYDIK+YE4q6YG4i6ogIQc0UlIOKKikA8ovdSEYj2oLqvlIFYKzpbGkCoFb2J0BHirOiqnjJoKzqupg9mRf0JUYjeRB8I8aBqHqRAK7qviwnNX9F9o3dV4KzovS0qNH1Fb1AUGHRlMNFxSgBWq1sGE/cKHjQyg1csSWjuis5VSUJjVyx64c9l6IolCqtbRv4NXIlCMfE2rUmqPKEYbNqSXGlCcVAx8iEtTWgssCyhGOwZCixJKAaOqcByhOLA2AXLEYoTg4FlCINrwmBgCUKT38GwwkJzrwlZ4a/aTD5kogoKDX8Hw4oJjX9EKwWF4sR8YCGh+e9gWAGh6deETF8oDiCA+kKzf1WbS1eIcIrG6f6Vgvn34DQ9Ic6CmkKMa0KmIzT4K4uENIQg9+A0dSHMNSFTFiIdMlGqQqx3MExRCLegqhDqmpApCRGBSkKwa0KmIIRcUEWIdg9Oyy3EuyZkeYWY72BYTiHgPTgtnxD0kInKJcR9RCv5hLCHTFQOIcQ32+llC5HfwbBMIfQ7GJYlBL4mZBlC9Ee0kiXEXzBDCPTNdnrrhODXhGyNUAzh38GwNcLh6dn2pj9eCaULh4eHp2cWjJgqDIDHTRuIacIQeGwFMUUYLdgMfvDfxWRhBAw3bPbhV0wUxo9o4Gv2+/3RNTYxSSjfwdjn+++uoR/UBGEAbDZjX9/3/V7v/Qdk4qpQAme+Vqvz8RMwcUU4HB1K30j62u0uMnFZOByNln3t7v7+Di5xSRgA+6u+/UZj9zkqcUEoJHDq60x9DWDivFACI18v9nWlr1GroRLnhBFwNPIfDpg5Xw2W+CAUw/OI5yfsVwMmzoQB8NxP3Q+YOBXGwN46HyhRCiNgb/GCWPFhEmOhGI7HOXyQxEgYA5cuwCQfIjES3ozHrSVfGhCPGArF506+/TCJ4X/+6Kw9QNGJ3o340m7FA+bywRHdO3HbngNm+9CIzmX9a3cGzOVDI3p39W9dRSAW0XEntw1VIBax4n6/31UFYhEd78fPXzvq/d70B1fIdY/+/H2i3D+cFYMdtzXa9IdmjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYy+4/RSRpe6TUOMMAAAAASUVORK5CYII=">
+    			</div>
+    			<div class="message_content_block">
+    				<span class="message_username">Поддержка</span>
+    				<div class="message_bubble">
+    					<span class="message_bubble_content">
+    						Здравствуйте.У вас возникли вопросы? Мы с удовольствием ответим!
+    					</span>
+    					<span class="message_bubble_time"> 13:26 </span>
+    			    </div>
+    			</div>
+    		</div>
+    	</div>
+
+    	<div class="buttonsContainer" style="display: block;">
+    		<div class="messenger_buttons"> У меня технический вопрос </div>
+    		<div class="messenger_buttons"> Расскажите о бонусах </div>
+    		<div class="messenger_buttons"> У меня вопрос по оплате </div>
+    	</div>
+    </ul>
+
+    <div id="settings">
+
+    <div class="settingsContainer">
+    <span class="containerTitle"> Уведомления </span>
+    <div class="settingsItem">
+    	<input type='checkbox' class='switcher' id='checkbox-1' checked="">
+    	<label for='checkbox-1'> Звук сообщения </label>
+    </div>
+    <div class="settingsItem">
+    	<input type='checkbox' class='switcher' id='checkbox-2'>
+    	<label for='checkbox-2'> Уведомления на рабочем столе </label>
+    </div>    
+    </div>
+
+    <div class="settingsContainer">
+    <span class="containerTitle"> Специальные возможности </span>
+    <div class="settingsItem">
+    	<input type='checkbox' class='switcher' id='checkbox-3' checked="">
+    	<label for='checkbox-3'> Увеличенный текст </label>
+    </div>
+    </div>
+
+
+    <div class="settingsContainer">
+    <span class="containerTitle"> Настройки чатов </span>
+    <div class="settingsItem">
+    	<input type='checkbox' class='switcher' id='checkbox-5'>
+    	<label for='checkbox-5'> Отправка Ctrl+Enter </label>
+    </div>
+    </div>
+    </div>
+
+    <div class="messanger_bottom">
+    <div class="messanger_field_container">
+    <input class="messanger_field" autocomplete="off" placeholder="Напишите сообщение" />
+    </div>
+    <div class="messanger_nav_container">
+    <span class="material-icons messanger_send"> arrow_upward </span>
+    </div>
+    </div>
+    </div>
+    <span class="material-icons messenger_trigger"> mail </span>
+    </div>
+
+    <script>
+
+
+$(document).ready(function() {
+  	getUserMessages(registerLocalUser());
+});  	
+
+
+function registerLocalUser(){
+    if (localStorage.getItem('settings') == null) {
+    $.ajax({
+    type: "GET",
+    url: '/register_local_user',
+    }).done(function(response) {
+        if (response['status'] == 'success' && response['localToken'] !== '') {
+        var settings = {
+        	'messenger' : {
+        		'key_send_type'      : 0,
+        		'allow_sounds'       : 0,
+        		'custom_font_size'   : 0,
+        		'push_notifications' : 0,
+        	},
+        	'user' : {
+        		'localToken' : response['localToken'] 
+        } }
+
+        localStorage.setItem('settings', JSON.stringify(settings));
+
+        return JSON.parse(localStorage.getItem('settings'))['user']['localToken'];
+
+    } } ).fail(function(err) {
+    	console.log('Произошла ошибка при локальной авторизации')
+    	return null;
+    }) } else {
+    	console.log('Локальное хранилище присутствует');
+    	return JSON.parse(localStorage.getItem('settings'))['user']['localToken'];
+    } }
+
+function getUserMessages(token) {
+
+	var responseData = null;
+
+    $.ajax({
+    type    : "GET",
+    url     : '/get_user_messages',
+    headers : {
+    	'localtoken' : token
+    }
+    }).done(function(response) {
+    	responseData = response;
+        if (response['status'] == 'success') {
+        if (response['messages'].length > 0) {
+        $('#messages').html('');
+        response['messages'].forEach(function(item, i, arr) {
+        	var m_content = JSON.parse(item['m_content']);
+        	if (m_content['from'] !== 'system') {
+        	render__Container(m_content['from'], m_content['message'], m_content['time'], m_content['username'], m_content['avatar'], m_content['buttons'], m_content['images'], m_content['hash']);
+            } else {
+            	systemLog(m_content['message']);
+            } 
+        }); 
+    } else {
+
+    } } } ).fail(function(err) {
+    	console.log('Произошла ошибка при локальной авторизации')
+    	return null;
+    });
+
+    $("#messages").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 100);
+
+    return responseData;
+}
+
+    function randomString(length) {
+    	var result           = '';
+    	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    	var charactersLength = characters.length;
+    	for ( var i = 0; i < length; i++ ) {
+    		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    	}
+    	return result;
+    }    	
+
+      function render__Container(type, message, time, username, avatar, buttons, images, hash){
+
+      	var avatar_block     = '';
+      	var username_block   = '';
+      	var buttonsContainer = '';
+        var imagesContainer  = '';
+
+      	if (type !== 'own') {
+      		avatar_block = '<div class="message_avatar_block"> <img class="message_avatar" src="' + avatar + '"> </div>';
+      		username_block = '<span class="message_username"> ' + username + ' </span>'
+        }
+      	
+      	if (buttons !== null && buttons !== 'undefined' && buttons.length > 0) {
+      		buttonsContainer = '<div class="buttonsContainer" style="display:block;">';
+      		buttons.forEach(function(item, i, arr) {
+      			buttonsContainer += '<div class="messenger_buttons">' + item['title'] + '</div>';
+      		});
+      		buttonsContainer += '</div>';
+      	}
+
+        if (images !== null && images !== 'undefined' && images.length > 0) {
+          imagesContainer = '<div class="imagesContainer">';
+          images.forEach(function(item, i, arr) {
+            imagesContainer += '<img src="' + item['thumb'] + '"></img>';
+          });
+          imagesContainer += '</div>';
+        }
+
+        var message_actions_container = '<div class="message_actions_container man_container_' + type + '" hash="' + hash + '"> <span class="material-icons message_actions_btn" hash="' + hash + '"> more_horiz </span> <div class="message_actions_navigation man_navigation_' + type + '" hash="' + hash + '"> <span class="man_btn" hash="' + hash + '" type="copy"> Скопировать </span> <span class="man_btn" hash="' + hash + '" type="listen"> Слушать </span> </div> </div>';
+
+      	var content = '<div class="message_container"> <div class="message message_' + type + '"> ' + avatar_block + ' <div class="message_content_block"> ' + username_block + ' <div class="message_bubble"> <span class="message_bubble_content" hash="' + hash + '"> ' + message + ' </span> ' + imagesContainer + ' <span class="message_bubble_time"> ' + time +  ' </span> </div> </div> </div> ' + message_actions_container + ' </div>' + buttonsContainer;
+
+      	$("#messages").append(content);
+      }
+
+      function systemLog(msg) {
+      	$("#messages").append('<div class="systemMessage">' + msg + '</div>');
+      }
+
+      $('.messenger_trigger').click(function(){
+      	if($(".messenger").css("display") == "block"){
+      		$(".messenger").slideUp(200);
+      		$(this).text('mail');
+      	} else {
+      		$(".messenger").slideDown(200);
+      		$(this).text('close');
+      		$("#messages").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 0);
+      	}
+      });
+
+      $('.goto_settings').click(function(){
+      	if($("#messages").css("display") == "block"){
+      		$('#settings').show();
+      		$('#messages').hide();
+      		$('.goto_settings').text('cancel');
+      		$('.mt_value').text('Настройки');
+      		$('.messanger_bottom').hide();
+      	} else {
+      		$('#messages').show();
+      		$('#settings').hide();
+      		$('.goto_settings').text('settings');
+      		$('.mt_value').text('Чат');
+      		$('.messanger_bottom').show();
+      }});
+
+
+      function hideAllElements(className, displayState){
+      	$('.message_actions_btn').removeClass('active__message_actions_btn');
+      	var elements = document.getElementsByClassName(className)
+      	for (var i = 0; i < elements.length; i++){
+      		elements[i].style.display = displayState;
+      	}
+      }
+
+      function copyToClipboard(element) {
+      	var $temp = $("<input>");
+      	$("body").append($temp);
+      	$temp.val($(element).html()).select();
+      	document.execCommand("copy");
+      	$temp.remove();
+      }
+
+      function listenMessage(text) {
+      	const message = new SpeechSynthesisUtterance();
+      	message.lang = "ru-RU";
+      	message.text = text;
+      	window.speechSynthesis.speak(message);
+      }
+
+      function play__Sound() {
+      	var audio = new Audio('https://proxy.notificationsounds.com/notification-sounds/unconvinced-569/download/file-sounds-1113-unconvinced.mp3');
+      	audio.play();
+      	return false;
+      }
+
+
+      $(function () {
+        var socket = io();
+        var roomHash = randomString(22);
+        $('.messanger_send').click(function(){
+          if ($('.messanger_field') !== null && $('.messanger_field').val() !== "") {
+          socket.emit('chat message', $('.messanger_field').val(), registerLocalUser());
+          $('.messanger_field').val('');
+          $('.buttonsContainer').remove();
+          return false;
+        }});
+
+        $('.messanger_field').keypress(function (e) {
+          if(e.which == 13) {
+          if ($('.messanger_field') !== null && $('.messanger_field').val() !== "") {
+          socket.emit('chat message', $('.messanger_field').val(), registerLocalUser());
+          $('.messanger_field').val('');
+          $('.buttonsContainer').remove();
+          return false;
+        }}});
+
+        $( document ).on( "click", ".messenger_buttons", function() {
+        	socket.emit('chat message', $(this).html(), registerLocalUser());
+        	$('.buttonsContainer').remove();
+        });
+
+        $( document ).on( "click", ".message_actions_btn", function() {
+        	var hash = $(this).attr('hash');
+        	hideAllElements('message_actions_navigation', 'none');
+        	$(this).addClass('active__message_actions_btn');
+        	$('.message_actions_navigation[hash="' + hash + '"]').show();
+        });
+
+        $( document ).on( "click", ".man_btn[type='copy']", function() {
+        	var hash = $(this).attr('hash');
+        	hideAllElements('message_actions_navigation', 'none');
+        	copyToClipboard('.message_bubble_content[hash="' + hash + '"]')
+        });
+
+        $( document ).on( "click", ".man_btn[type='listen']", function() {
+        	var hash = $(this).attr('hash');
+        	hideAllElements('message_actions_navigation', 'none');
+        	listenMessage($('.message_bubble_content[hash="' + hash + '"]').html());
+        });
+
+        $('#messages').click(function(){
+        	hideAllElements('message_actions_navigation', 'none');
+        });
+
+        socket.on('chat message', function(msg){
+          console.log(msg);
+          if (typeof msg === 'object' && msg !== null) {
+          	if (msg['from'] !== 'system') {
+          	if (msg['from'] !== 'own') { play__Sound(); } 
+          	render__Container(msg['from'], msg['message'], msg['time'], msg['username'], msg['avatar'], msg['buttons'], msg['images'], msg['hash']);
+            } else {
+            	systemLog(msg['message']);
+            } } else {
+          	console.log('Произошла техническая ошибка')
+          }
+          $("#messages").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 100);
+        });
+      });
+    </script>
+  </body>
+</html>
