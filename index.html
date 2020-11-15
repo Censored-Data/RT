@@ -2,13 +2,629 @@
 <html>
 <head>
 <title> Ростелеком </title>
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<link rel="stylesheet" href="assets/css/style.css">
-</head>
-    
+
+<style>
+body {
+  font-family: sans-serif;
+  background: #7800FF;
+  margin: 0;
+  padding: 0;
+}
+
+.messenger {
+  display: none;
+  float: right;
+  width: 360px;
+  height: auto;
+  border-radius: 20px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 7px 32px 0 rgba(0,0,0,.1);
+  border: 1px solid #dddfe0;
+  background: #fff;
+}
+
+#messages {
+  display: block;
+  float: left;
+  width: 100%;
+  height: 450px;
+  overflow-y: hidden;
+  max-height: 450px;
+  min-height: 450px;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#messages::-webkit-scrollbar-track {
+	margin-right: 5px;
+	background: transparent;
+	margin-right: 5px;
+	border-radius: 0
+}
+
+#messages::-webkit-scrollbar {
+	width: 4px;
+	border-radius: 0
+}
+
+#messages::-webkit-scrollbar-thumb {
+	background-color: #bdbdbd;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 0
+}
+
+#messages:hover {
+	overflow-y: overlay;
+}
+
+.messanger_field {
+	display: block;
+	float: left;
+	width: calc(100% - 40px);
+	padding: 20px;
+	font-size:16px;
+	border: 0px;
+	outline: 0px;
+	font-family: sans-serif;
+	border-radius: 0px 0px 0px 20px;
+}
+
+.messanger_title {
+	display: block;
+	float: left;
+	text-align: left;
+	font-size: 25px;
+	width: calc(100% - 60px);
+	padding: 20px;
+	padding-left: 30px;
+	padding-right: 30px;
+	font-weight: 700;
+	color: #333333;
+	border-bottom: 1px solid #dddfe0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.messanger_bottom {
+	display: block;
+	float: left;
+	width: 100%;
+	position: relative;
+	border-top: 1px solid #dddfe0;
+}
+
+.messanger_field_container {
+	display: block;
+	float: left;
+	width: 80%;
+}
+
+.messanger_nav_container {
+	display: block;
+	float: left;
+	width: 20%;
+	text-align: center;
+}
+
+.messanger_container {
+	display: block;
+	float: right;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 360px;
+}
+
+.messanger_send {
+	display: inline-block;
+	color: #fff;
+	border-radius: 100%;
+	padding: 8px;
+	font-size: 22px;
+	background: #7800FF;
+	margin-top: 10px;
+	transition: .2s ease all;
+    -moz-transition: .2s ease all;
+    -webkit-transition: .2s ease all;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.messanger_send:hover {
+	background: #6c00e6;
+}
+
+.messanger_send:active {
+	transform: scale(.9);
+}
+
+.message_container {
+	display: block;
+	float: left;
+	width: 100%;
+	position: relative;
+	margin-top: 15px;
+}
+
+.message_container:last-child {
+	margin-bottom: 15px;
+}
+
+.message {
+	display: block;
+	float: left;
+	max-width: 80%;
+	margin-left: 15px;
+}
+
+.message_own {
+	display: block;
+	float: right !important;
+	margin-left: 0px;
+	margin-right: 15px;
+}
+
+.message_avatar_block {
+	display: block;
+	float: left;
+	width: 30px;
+	height: 30px;
+}
+
+.message_avatar {
+	display: block;
+	float: left;
+	width: 30px;
+	height: 30px;
+	border-radius: 100%;
+	object-fit: cover;
+	pointer-events: none;
+	-webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+	position: absolute;
+	bottom: 0;
+}
+
+.message_content_block {
+	display: block;
+	float: left;
+	margin-left: 10px;
+	max-width: calc(100% - 40px);
+}
+
+.message_own .message_content_block {
+	float: right !important;
+	margin-left: 0px;
+	margin-right: 10px;
+}
+
+.message_own .message_bubble {
+	border-radius: 17px 17px 0px 17px;
+	background: #6c00e6;
+	color: #fff;
+}
+
+.message_own .message_bubble_content {
+	color: #fff;
+	word-break: break-word;
+}
+
+.message_own .message_bubble_time {
+	color: #fff;
+	text-align: right;	
+}
+
+.message_username {
+	display: block;
+	float: left;
+	width: 100%;
+	color: #9299a2;
+	font-size: 13px;
+	text-align: left;
+	text-decoration: none;
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
+
+.message_bubble {
+	display: block;
+	float: left;
+	width: calc(100% - 30px);
+	background: #eef2f7;
+	border-radius: 17px 17px 17px 0px;
+	padding: 15px;
+}
+
+.message_bubble_content {
+	display: block;
+	float: left;
+	width: 100%;
+	font-size: 15px;
+}
+
+.message_bubble_time {
+	display: block;
+	float: left;
+	width: 100%;
+	font-size: 12px;
+	margin-top: 8px;
+}
+
+.messenger_trigger {
+	display: block;
+	float: right;
+	padding: 14px;
+	font-size: 32px;
+	color: #fff;
+	text-align: center;
+	background: #ff4f12;
+	border-radius: 20px;
+	margin-right: 30px;
+	margin-bottom: 30px;
+	cursor: pointer;
+	transition: .2s ease all;
+  -moz-transition: .2s ease all;
+  -webkit-transition: .2s ease all;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2), 0 15px 35px 0 rgba(100,100,100,0.3);
+}
+
+.messenger_trigger:hover {
+	background: #de3900;
+}
+
+.messenger_trigger:active {
+	transform: scale(.9);
+}
+
+.goto_settings {
+	display: block;
+	float: right;
+	margin-top: 5px;
+	opacity: 0.4;
+	cursor: pointer;
+	transition: .3s ease all;
+  -moz-transition: .3s ease all;
+  -webkit-transition: .3s ease all;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.goto_settings:hover {
+	opacity: 1;
+}
+
+.goto_settings:active {
+	transform: scale(.9);	
+}
+
+.buttonsContainer {
+	display: none;
+	float: left;
+	width: calc(100% - 30px);
+	position: relative;
+	margin-top: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-bottom: 15px;
+}
+
+.messenger_buttons {
+	display: block;
+	float: right;
+	padding: 12px;
+	font-size: 16px;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-radius: 10px;
+	margin-left: 15px;
+	margin-bottom: 15px;
+	box-shadow: 0 2px 16px rgba(0,0,0,.08);
+	color: #333333;
+	cursor: pointer;
+	transition: .2s ease all;
+  -moz-transition: .2s ease all;
+  -webkit-transition: .2s ease all;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.messenger_buttons:active {
+	transform: scale(.95);
+}
+
+.imagesContainer {
+  display: block;
+  float: left;
+  width: 100%;
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.imagesContainer img {
+  display: block;
+  float: left;
+  width: 100%;
+  border-radius: 15px;
+}
+
+#settings {
+	display: none;
+    float: left;
+    width: 100%;
+    height: 509px;
+    overflow-y: hidden;
+    max-height: 509px;
+    min-height: 509px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+#settings::-webkit-scrollbar-track {
+	margin-right: 5px;
+	background: transparent;
+	margin-right: 5px;
+	border-radius: 0
+}
+
+#settings::-webkit-scrollbar {
+	width: 4px;
+	border-radius: 0
+}
+
+#settings::-webkit-scrollbar-thumb {
+	background-color: #bdbdbd;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 0
+}
+
+#settings:hover {
+	overflow-y: overlay;
+}
+
+
+.mt_value {
+	display: block;
+	float: left;
+}
+
+
+input[type="checkbox"].switcher {
+	display: none;
+    position: absolute;
+    margin: 8px 0 0 16px;    
+}
+input[type="checkbox"].switcher + label {
+	color: #333333;
+	cursor: pointer;
+    position: relative;
+    padding: 5px 0 0 55px;
+    line-height: 2.0em;
+}
+input[type="checkbox"].switcher + label:before {
+    content: "";
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    width: 40px; /* x*5 */
+    height: 24px; /* x*3 */
+    border-radius: 16px; /* x*2 */
+    background: #d9d9d9;
+    border: 1px solid #d9d9d9;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+input[type="checkbox"].switcher + label:after {
+    content: "";
+    position: absolute;
+    display: block;
+    left: 0px;
+    top: 0px;
+    width: 24px; /* x*3 */
+    height: 24px; /* x*3 */
+    border-radius: 16px; /* x*2 */
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+input[type="checkbox"].switcher + label:hover:after {
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+input[type="checkbox"].switcher:checked + label:after {
+    margin-left: 16px;
+}
+input[type="checkbox"].switcher:checked + label:before {
+    background: #7800FF;
+}
+
+.settingsItem {
+	display: block;
+	float: left;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.settingsItem:last-child {
+	margin-bottom: 0px;
+}
+
+.settingsContainer {
+	display: block;
+	float: left;
+	width: calc(100% - 60px);
+	padding: 15px;
+	margin: 15px;
+	border-radius: 10px;
+	background: #eef2f7;
+	margin-bottom: 20px;
+}
+
+.containerTitle {
+	display: block;
+	float: left;
+	width: 100%;
+	color: #333333;
+	font-size: 16px;
+	font-weight: 700;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #dde5ef;
+}
+
+.systemMessage {
+	display: block;
+	float: left;
+	width: 80%;
+	position: relative;
+	color: #333333;
+	font-size: 14px;
+	margin-top: 25px;
+	margin-bottom: 25px;
+	text-align: center;
+	margin-left: 10%;
+	pointer-events: none;
+}
+
+.message_actions_container {
+	display: block;
+	float: left;
+	position: relative;
+}
+
+.message_container:hover .message_actions_btn {
+	visibility: visible;
+}
+
+.message_actions_btn {
+	visibility: hidden;
+	display: block;
+	float: left;
+	position: sticky;
+	padding: 5px;
+	cursor: pointer;
+	margin-top: 20px;
+	border-radius: 5px;
+	font-size: 20px;
+	margin-left: 10px;
+	color: #333333;
+	opacity: 0.4;
+	cursor: pointer;
+	transition: .2s ease all;
+	-moz-transition: .2s ease all;
+	-webkit-transition: .2s ease all;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.message_actions_btn:hover {
+	background: #eef2f7;
+	opacity: 1;
+}
+
+.active__message_actions_btn {
+	background: #eef2f7;
+	opacity: 1;
+}
+
+.message_actions_navigation {
+	display: none;
+	float: left;
+	width: 145px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	position: absolute;
+	margin-left: -105px;
+	margin-top: 55px;
+	background: #fff;
+	box-shadow: 0 8px 16px rgba(51,51,51,.2);
+	border-radius: 5px;
+	z-index: 2;
+}
+
+.man_navigation_own {
+		margin-right: 105px !important;
+		margin-left: 0px !important;
+}
+
+.man_btn {
+	display: block;
+	float: left;
+	width: calc(100% - 30px);
+	text-decoration: none;
+	color: #333;
+	padding: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	cursor: pointer;
+	transition: .3s ease all;
+	-moz-transition: .3s ease all;
+	-webkit-transition: .3s ease all;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	font-size: 14px;
+}
+
+.man_btn:hover {
+	background: #F6F7F8;
+}
+
+.man_container_own {
+	display: block;
+	float: right;
+}
+
+</style>
+
+    </head>
     <body>
+
   	<div class="messanger_container">
     <div class="messenger">
     <div class="messanger_title">
@@ -34,7 +650,7 @@
     	</div>
 
     	<div class="buttonsContainer" style="display: block;">
-    		<div class="messenger_buttons"> У меня технический вопрос </div>
+    		<div class="messenger_buttons" callback="11"> У меня технический вопрос </div>
     		<div class="messenger_buttons"> Расскажите о бонусах </div>
     		<div class="messenger_buttons"> У меня вопрос по оплате </div>
     	</div>
@@ -84,34 +700,60 @@
     <span class="material-icons messenger_trigger"> mail </span>
     </div>
 
-    <script>
+<script>
 
+var settings = {
+	'messenger' : {
+		'messenger_title'    : 'Чат',
+		'key_send_type'      : 0,
+		'allow_sounds'       : 0,
+		'custom_font_size'   : 0,
+		'push_notifications' : 0,
+		'trigger_button'     : {
+			'background'     : '#ff4f12',
+			'hover'          : '#de3900',
+			'icon'           : 'close',
+		},
+		'send_button'        : {
+			'background'     : '#7800FF',
+			'hover'          : '#6c00e6',
+			'icon'           : 'arrow_upward'
+		},
+		'user_bubble_color'  : '#6c00e6',
+		'bot_bubble_color'   : '#eef2f7',
+		'callback_btn_color' : '#ffffff'
+	},
+	'user' : {
+		'localToken'         : null
+	}
+}
 
 $(document).ready(function() {
-  	getUserMessages(registerLocalUser());
+  	getUserMessages(registerLocalUser(settings));
 });  	
 
 
-function registerLocalUser(){
+function applySettings() {
+	if (localStorage.getItem('settings') !== null || localStorage.getItem('undefined')) {
+	var systemSettings = JSON.parse(localStorage.getItem('settings'));
+	$('.messenger_trigger').css({'backgroundColor' : systemSettings['messenger']['trigger_button']['background']})
+	} else {
+		localStorage.setItem('settings', JSON.stringify(settings));
+		self.applySettings();
+	}
+}
+
+
+function registerLocalUser(settings){
     if (localStorage.getItem('settings') == null) {
     $.ajax({
     type: "GET",
     url: '/register_local_user',
     }).done(function(response) {
         if (response['status'] == 'success' && response['localToken'] !== '') {
-        var settings = {
-        	'messenger' : {
-        		'key_send_type'      : 0,
-        		'allow_sounds'       : 0,
-        		'custom_font_size'   : 0,
-        		'push_notifications' : 0,
-        	},
-        	'user' : {
-        		'localToken' : response['localToken'] 
-        } }
-
+        	
+        settings['user']['localToken'] = response['localToken'];
         localStorage.setItem('settings', JSON.stringify(settings));
-
         return JSON.parse(localStorage.getItem('settings'))['user']['localToken'];
 
     } } ).fail(function(err) {
@@ -182,7 +824,8 @@ function getUserMessages(token) {
       	if (buttons !== null && buttons !== 'undefined' && buttons.length > 0) {
       		buttonsContainer = '<div class="buttonsContainer" style="display:block;">';
       		buttons.forEach(function(item, i, arr) {
-      			buttonsContainer += '<div class="messenger_buttons">' + item['title'] + '</div>';
+      			console.log('buttons_callback:' + item['callback']);
+      			buttonsContainer += '<div class="messenger_buttons" callback="' + item['callback'] + '">' + item['title'] + '</div>';
       		});
       		buttonsContainer += '</div>';
       	}
@@ -268,7 +911,7 @@ function getUserMessages(token) {
         var roomHash = randomString(22);
         $('.messanger_send').click(function(){
           if ($('.messanger_field') !== null && $('.messanger_field').val() !== "") {
-          socket.emit('chat message', $('.messanger_field').val(), registerLocalUser());
+          socket.emit('chat message', $('.messanger_field').val(), registerLocalUser(settings));
           $('.messanger_field').val('');
           $('.buttonsContainer').remove();
           return false;
@@ -277,14 +920,21 @@ function getUserMessages(token) {
         $('.messanger_field').keypress(function (e) {
           if(e.which == 13) {
           if ($('.messanger_field') !== null && $('.messanger_field').val() !== "") {
-          socket.emit('chat message', $('.messanger_field').val(), registerLocalUser());
+          socket.emit('chat message', $('.messanger_field').val(), registerLocalUser(settings));
           $('.messanger_field').val('');
           $('.buttonsContainer').remove();
           return false;
         }}});
 
         $( document ).on( "click", ".messenger_buttons", function() {
-        	socket.emit('chat message', $(this).html(), registerLocalUser());
+        	
+        	var callback = null;
+
+        	if ($(this).attr('callback') !== null || $(this).attr('callback') !== 'undefined' || $(this).attr('callback') !== '') {
+        		callback = $(this).attr('callback');
+        	}
+
+        	socket.emit('chat message', $(this).html(), registerLocalUser(settings), callback);
         	$('.buttonsContainer').remove();
         });
 
@@ -314,6 +964,7 @@ function getUserMessages(token) {
         socket.on('chat message', function(msg){
           console.log(msg);
           if (typeof msg === 'object' && msg !== null) {
+          	console.log(msg);
           	if (msg['from'] !== 'system') {
           	if (msg['from'] !== 'own') { play__Sound(); } 
           	render__Container(msg['from'], msg['message'], msg['time'], msg['username'], msg['avatar'], msg['buttons'], msg['images'], msg['hash']);

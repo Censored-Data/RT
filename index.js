@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
 });
 
 const connection = mysql.createConnection({
-    host             :  "ip_address",
+    host             :  "server_ip",
     user             :  "username",
     password         :  "password",
     database         :  "db_name"
@@ -94,15 +94,18 @@ app.get('/register_local_user', async function(req, res) {
   if (typeof results !== 'undefined' || results.length == 0) {
     connection.query("INSERT INTO `local_tokens` (`t_id`, `t_value`, `t_ua`, `t_date`) VALUES (NULL, '" + localToken + "', '" + user_agent + "', CURRENT_TIMESTAMP);", function(err, results, fields) {
       if (err) { console.log(error); } else {
+
         user_local_data['status']     = 'success';
         user_local_data['localToken'] = localToken;
         res.send(user_local_data);
+
     }})} else {
+
         user_local_data['status'] = 'error';
         user_local_data['msg']    = 'Произошла внутренняя ошибка. Локальный токен уже зарегистрирован'
         res.send(user_local_data);
-    }
-}) });
+
+    } }) });
 
 
 // +-------------------------------------------------------+
@@ -122,6 +125,7 @@ app.get('/get_user_messages', async function(req, res) {
   if (typeof results !== 'undefined' && results.length > 0) {
     connection.query("SELECT * FROM messages WHERE messages.m_user_token = '" + localToken + "'", function(err, results, fields) {
       if (err) { console.log(error); } else {
+
         response['status']     = 'success';
         response['localToken'] = localToken;
         response['messages']   = [];
@@ -206,7 +210,11 @@ async function EmptyBotResponse(localToken, unix) {
   io.to(socket.id).emit('chat message', bot_response);
 }
 
-socket.on('chat message', async function(msg,localToken){
+socket.on('chat message', async function(msg,localToken,callback){
+
+    if (callback == null || callback == 'undefined' || callback == '') {
+      callback = null;
+    }
 
     var unix = Math.round(+new Date() / 1000);
 	
@@ -244,28 +252,6 @@ socket.on('chat message', async function(msg,localToken){
 
       saveMessageDB(bot_response, localToken, unix, 'bot');
 
-      } else if (msg.includes('У меня технический вопрос') || msg.includes('У меня возникли трудности') || msg.includes('У меня проблемы') || msg.includes('Проблемы')) {
-            var bot_response = {
-                'from'        : 'bot',
-                'message'     : 'В какой сфере у Вас возникли трудности?',
-                'hash'        :  md5(randomString(20)),
-                'time'        : new Date().toTimeString().replace(/:[0-9]{2,2} .*/, ''),
-                'username'    : 'Поддержка',
-                'avatar'      : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAA1VBMVEXx9PZ4AP//TxLy9vZtAP/n4vfx+Pv2wbX/QgD0+fb4//VzAP//RgD7TBHy8/a0HQbcNwzyRhDDp/qHNf7oPw7j3PezHADJKwnfOQ3uRA/RMAvl3/ixGwa7IQeHNv6GMP6AB+azCQDBT0O+IwD8cUzJKwDTMgDBpPrazfjg1/jHrfnUxPiMPf3KsvmtgPuUUP3q5/fQVkTLHwDYKQDiXkblMwDybE18B/S7KHWME9mRFNB+CfCpefzYN0GWY/+2AJTMwP++ULbvNBT9Zj3oxtLxurj01s+btbN4AAAD8klEQVR4nO3ci1LaQACFYSBoTVYEKzWAIigVa0tb7c3W2tr7+z9Sc1mQS0Kymzjs2Tn/+AB8c5Jdh3GsVBhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY4yl5jqb/gSPnHfxwt30Z3jUvIu6uLSZ6D2tV6s2EyNgQHxmK1ECA+KRncQZ0NYV54B2rrgAtHHF4JqoLmTbiksL2rdiAtAuYiLQpgc1BWjPiqlAW1ZcA7RjxbVAG1bMAOKvmAlEJ+YAYj+ouYDIK+YE4q6YG4i6ogIQc0UlIOKKikA8ovdSEYj2oLqvlIFYKzpbGkCoFb2J0BHirOiqnjJoKzqupg9mRf0JUYjeRB8I8aBqHqRAK7qviwnNX9F9o3dV4KzovS0qNH1Fb1AUGHRlMNFxSgBWq1sGE/cKHjQyg1csSWjuis5VSUJjVyx64c9l6IolCqtbRv4NXIlCMfE2rUmqPKEYbNqSXGlCcVAx8iEtTWgssCyhGOwZCixJKAaOqcByhOLA2AXLEYoTg4FlCINrwmBgCUKT38GwwkJzrwlZ4a/aTD5kogoKDX8Hw4oJjX9EKwWF4sR8YCGh+e9gWAGh6deETF8oDiCA+kKzf1WbS1eIcIrG6f6Vgvn34DQ9Ic6CmkKMa0KmIzT4K4uENIQg9+A0dSHMNSFTFiIdMlGqQqx3MExRCLegqhDqmpApCRGBSkKwa0KmIIRcUEWIdg9Oyy3EuyZkeYWY72BYTiHgPTgtnxD0kInKJcR9RCv5hLCHTFQOIcQ32+llC5HfwbBMIfQ7GJYlBL4mZBlC9Ee0kiXEXzBDCPTNdnrrhODXhGyNUAzh38GwNcLh6dn2pj9eCaULh4eHp2cWjJgqDIDHTRuIacIQeGwFMUUYLdgMfvDfxWRhBAw3bPbhV0wUxo9o4Gv2+/3RNTYxSSjfwdjn+++uoR/UBGEAbDZjX9/3/V7v/Qdk4qpQAme+Vqvz8RMwcUU4HB1K30j62u0uMnFZOByNln3t7v7+Di5xSRgA+6u+/UZj9zkqcUEoJHDq60x9DWDivFACI18v9nWlr1GroRLnhBFwNPIfDpg5Xw2W+CAUw/OI5yfsVwMmzoQB8NxP3Q+YOBXGwN46HyhRCiNgb/GCWPFhEmOhGI7HOXyQxEgYA5cuwCQfIjES3ozHrSVfGhCPGArF506+/TCJ4X/+6Kw9QNGJ3o340m7FA+bywRHdO3HbngNm+9CIzmX9a3cGzOVDI3p39W9dRSAW0XEntw1VIBax4n6/31UFYhEd78fPXzvq/d70B1fIdY/+/H2i3D+cFYMdtzXa9IdmjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYy+4/RSRpe6TUOMMAAAAASUVORK5CYII=',
-                'buttons'     : [
-                    { 'title' : 'Интернет' },
-                    { 'title' : 'Мобильная связь' },
-                    { 'title' : 'Телевидение' },
-                    { 'title' : 'Телефон' },
-                    { 'title' : 'Видеонаблюдение' },
-                ],
-                'images': null
-            }
-
-            saveMessageDB(bot_response, localToken, unix, 'bot');
-
-            io.to(socket.id).emit('chat message', bot_response);
-
       } else if (msg.includes('Картинка') || msg.includes('Картинка') || msg.includes('Покажи картинку')) {
 
             var bot_response = {
@@ -293,22 +279,35 @@ socket.on('chat message', async function(msg,localToken){
         await fetchSynonyms(user_msg);
 
         var keywordsData = msg.trim().replace(/ /g, '|');
+
         console.log(keywordsData);
-        var db_request = 'SELECT * FROM faq WHERE faq.f_question REGEXP "' + keywordsData  + '"';
+       
+       // var db_request = 'SELECT * FROM faq WHERE faq.f_question REGEXP "' + keywordsData  + '"';
+
+        console.log(callback);
+
+        if (callback !== null) {
+        var db_request = 'SELECT * FROM faq WHERE faq.f_id = ' + callback;
+        } else {
+        var db_request = 'SELECT * FROM faq WHERE faq.f_question LIKE "%' + msg + '%" AND faq.f_bot_access = 1';
+        }
 
         connection.query(db_request,
             async function(err, results, fields) {
                 if (err) throw err;
                 if (typeof results !== 'undefined' && results.length > 0) {
 
+                  console.log(results);
+
                     var bot_response = {
                         'from'       : 'bot',
                         'message'    :  results[0]['f_answer'],
+                        'hash'       :  md5(randomString(20)),
                         'time'       :  new Date().toTimeString().replace(/:[0-9]{2,2} .*/, ''),
                         'username'   : 'Поддержка',
                         'avatar'     : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAA1VBMVEXx9PZ4AP//TxLy9vZtAP/n4vfx+Pv2wbX/QgD0+fb4//VzAP//RgD7TBHy8/a0HQbcNwzyRhDDp/qHNf7oPw7j3PezHADJKwnfOQ3uRA/RMAvl3/ixGwa7IQeHNv6GMP6AB+azCQDBT0O+IwD8cUzJKwDTMgDBpPrazfjg1/jHrfnUxPiMPf3KsvmtgPuUUP3q5/fQVkTLHwDYKQDiXkblMwDybE18B/S7KHWME9mRFNB+CfCpefzYN0GWY/+2AJTMwP++ULbvNBT9Zj3oxtLxurj01s+btbN4AAAD8klEQVR4nO3ci1LaQACFYSBoTVYEKzWAIigVa0tb7c3W2tr7+z9Sc1mQS0Kymzjs2Tn/+AB8c5Jdh3GsVBhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY4yl5jqb/gSPnHfxwt30Z3jUvIu6uLSZ6D2tV6s2EyNgQHxmK1ECA+KRncQZ0NYV54B2rrgAtHHF4JqoLmTbiksL2rdiAtAuYiLQpgc1BWjPiqlAW1ZcA7RjxbVAG1bMAOKvmAlEJ+YAYj+ouYDIK+YE4q6YG4i6ogIQc0UlIOKKikA8ovdSEYj2oLqvlIFYKzpbGkCoFb2J0BHirOiqnjJoKzqupg9mRf0JUYjeRB8I8aBqHqRAK7qviwnNX9F9o3dV4KzovS0qNH1Fb1AUGHRlMNFxSgBWq1sGE/cKHjQyg1csSWjuis5VSUJjVyx64c9l6IolCqtbRv4NXIlCMfE2rUmqPKEYbNqSXGlCcVAx8iEtTWgssCyhGOwZCixJKAaOqcByhOLA2AXLEYoTg4FlCINrwmBgCUKT38GwwkJzrwlZ4a/aTD5kogoKDX8Hw4oJjX9EKwWF4sR8YCGh+e9gWAGh6deETF8oDiCA+kKzf1WbS1eIcIrG6f6Vgvn34DQ9Ic6CmkKMa0KmIzT4K4uENIQg9+A0dSHMNSFTFiIdMlGqQqx3MExRCLegqhDqmpApCRGBSkKwa0KmIIRcUEWIdg9Oyy3EuyZkeYWY72BYTiHgPTgtnxD0kInKJcR9RCv5hLCHTFQOIcQ32+llC5HfwbBMIfQ7GJYlBL4mZBlC9Ee0kiXEXzBDCPTNdnrrhODXhGyNUAzh38GwNcLh6dn2pj9eCaULh4eHp2cWjJgqDIDHTRuIacIQeGwFMUUYLdgMfvDfxWRhBAw3bPbhV0wUxo9o4Gv2+/3RNTYxSSjfwdjn+++uoR/UBGEAbDZjX9/3/V7v/Qdk4qpQAme+Vqvz8RMwcUU4HB1K30j62u0uMnFZOByNln3t7v7+Di5xSRgA+6u+/UZj9zkqcUEoJHDq60x9DWDivFACI18v9nWlr1GroRLnhBFwNPIfDpg5Xw2W+CAUw/OI5yfsVwMmzoQB8NxP3Q+YOBXGwN46HyhRCiNgb/GCWPFhEmOhGI7HOXyQxEgYA5cuwCQfIjES3ozHrSVfGhCPGArF506+/TCJ4X/+6Kw9QNGJ3o340m7FA+bywRHdO3HbngNm+9CIzmX9a3cGzOVDI3p39W9dRSAW0XEntw1VIBax4n6/31UFYhEd78fPXzvq/d70B1fIdY/+/H2i3D+cFYMdtzXa9IdmjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYy+4/RSRpe6TUOMMAAAAASUVORK5CYII=',
-                        'buttons'    :  null,
-                        'images'     :  null
+                        'buttons'    :  JSON.parse(results[0]['f_buttons']),
+                        'images'     :  JSON.parse(results[0]['f_images'])
                     }
 
                     io.to(socket.id).emit('chat message', bot_response);
