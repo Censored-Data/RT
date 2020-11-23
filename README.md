@@ -23,7 +23,7 @@
 ```
 
 ##### Демонстрация личного кабинета пользователя
-![] <img src="https://github.com/Censored-Data/Rostelekom-chat-bot/blob/main/preview.png" width="300" />
+<img src="https://github.com/Censored-Data/Rostelekom-chat-bot/blob/main/preview.png" width="450" />
 
 #### 
 
