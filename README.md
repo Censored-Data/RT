@@ -23,7 +23,7 @@
 ```
 
 ##### Демонстрация личного кабинета пользователя
-![](https://github.com/Censored-Data/MOS.RU/blob/main/Gallery/Afisha.gif?raw=true)
+![](https://github.com/Censored-Data/Rostelekom-chat-bot/blob/main/preview.png)
 
 #### 
 
